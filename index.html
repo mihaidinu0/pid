@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Document</title>
+</head>
+<body style="background-color: white;">
+    <div class="container">
+        <canvas id="mycanvas" width="1000" height="1000"></canvas>
+    </div>
+</body>
+
+<script>
+    var c = document.getElementById("mycanvas");
+    var ctx = c.getContext("2d");
+    var t = 0;
+
+
+    var centerX = c.width / 2;
+    var centerY = c.height * 1/2;
+
+    var platformHeight = 15;
+    var platformLength = 200;
+
+    var pendulumLength = 300;
+    var pendulumWidth = 10;
+
+    var platformX = 0;
+    var platformY = 0;
+
+    var deltaX = 0;
+
+    var theta = 0;
+
+    setInterval(() => {
+        ctx.clearRect(0, 0, c.width, c.height);
+
+        thetaDegrees = Math.sin(t) * 30;
+        let thetaRadians = thetaDegrees * (Math.PI / 180);
+
+        ctx.font = "24px Arial";
+        ctx.fillText(`Theta: ${thetaDegrees.toFixed(2)}`, 100, c.height - 100);
+
+
+        deltaX = 100 * Math.cos(t);
+        platformX = centerX + deltaX - platformLength/2;
+        platformY = centerY - platformHeight/2;
+
+        pendulumBaseX = platformX + platformLength / 2;
+        pendulumBaseY = platformY;
+
+        ctx.save();
+
+        ctx.translate(pendulumBaseX, pendulumBaseY);
+        ctx.rotate(thetaRadians);
+
+        ctx.beginPath();
+        ctx.rect(
+            - pendulumWidth/2,
+            - pendulumLength + platformHeight/2,
+            pendulumWidth,
+            pendulumLength
+        );
+        ctx.fill();
+
+        ctx.restore();
+
+        ctx.beginPath();
+        ctx.rect(
+            platformX,
+            platformY,
+            platformLength,
+            platformHeight
+        );
+        ctx.fill();
+
+        let bobX = pendulumBaseX - pendulumLength * Math.sin(thetaRadians + Math.PI);
+        let bobY = pendulumBaseY - pendulumLength * Math.cos(thetaRadians);
+    
+        ctx.beginPath();
+        ctx.arc(bobX, bobY, 40, 0, 2 * Math.PI);
+        ctx.fill();
+
+        t = t + 0.1;
+    }, 1000/60);
+
+    </script>
+
+</html>
