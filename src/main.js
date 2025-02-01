@@ -130,13 +130,13 @@
     
             // Draw pendulum
             ctx.save();
-            ctx.translate(pendulumBaseX, pendulumBaseY);
+            ctx.translate(pendulumBaseX, pendulumBaseY + this.platformHeight/2);
             ctx.rotate(thetaRadians);
             
             ctx.fillStyle = "#666";
             ctx.fillRect(
                 -this.pendulumWidth/2,
-                -this.pendulumLength + this.platformHeight/2,
+                -this.pendulumLength + this.pendulumWidth/2,
                 this.pendulumWidth,
                 this.pendulumLength
             );
