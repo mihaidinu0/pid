@@ -9,16 +9,16 @@
 <body>
     <div class="control-panel">
         <div class="control-group">
-            <label>KP: <input type="number" id="kp" value="300" step="10"></label>
-            <input type="range" id="kpRange" min="0" max="1000" value="300">
+            <label>KP: <input type="number" id="kp" value="50" step="10"></label>
+            <input type="range" id="kpRange" min="0" max="1000" value="50">
         </div>
         <div class="control-group">
-            <label>KI: <input type="number" id="ki" value="20" step="1"></label>
-            <input type="range" id="kiRange" min="0" max="100" value="20">
+            <label>KI: <input type="number" id="ki" value="0" step="1"></label>
+            <input type="range" id="kiRange" min="0" max="100" value="0">
         </div>
         <div class="control-group">
-            <label>KD: <input type="number" id="kd" value="500" step="10"></label>
-            <input type="range" id="kdRange" min="0" max="1000" value="500">
+            <label>KD: <input type="number" id="kd" value="20" step="10"></label>
+            <input type="range" id="kdRange" min="0" max="1000" value="20">
         </div>
         <div class="control-group">
             <label>Setpoint: <input type="number" id="setpoint" value="0" step="0.1"></label>
@@ -30,7 +30,7 @@
     </div>
 
     <div class="container">
-        <canvas id="mycanvas" width="1000" height="1000"></canvas>
+        <canvas id="mycanvas" width="1000" height="800"></canvas>
     </div>
 
     <script type="module" src="src/main.js"></script>

@@ -6,7 +6,7 @@
             this.canvas = document.getElementById('mycanvas');
             this.ctx = this.canvas.getContext('2d');
             this.pendulum = new Pendulum();
-            this.controller = new PIDController(300, 20, 500, 0.02, 30);
+            this.controller = new PIDController(50, 0, 20, 0.02, 30);
             this.pidEnabled = false;
 
             this.pendulumLength = 300;
