@@ -18,7 +18,7 @@
     const m = 1.0;    // pendulum tip mass (kg)
     let theta = Math.PI / 2; // initial angle
     let v = 0;        // initial angular velocity
-    const dt = 0.02;  // step time (s)
+    let dt = 0.02;  // step time (s)
     var tau = 0;    // initial torque
 
     let perturbation = 0;  // External disturbance force
@@ -38,27 +38,65 @@ document.addEventListener("keyup", (event) => {
 });
 
 
-    // PID controller parameters
-    let Kp = 50.0;   // Proportional gain
-    let Ki = 50.0;    // Integral gain
-    let Kd = 25.0;    // Derivative gain
 
-    let integral = 0;  // Integral term
-    let lastError = 0; // For derivative term
-    let thetaSetpoint = 0; // Desired position (upright)
+    class PidController {
+        constructor(kp = 50, ki = 50, kd = 50, dt = 0.02, maxOutput = Number.MAX_VALUE) {
+            this.dt = dt;
+            this.kp = kp;
+            this.ki = ki;
+            this.kd = kd;
+            this.maxOutput = maxOutput
+            this.integral = 0;
+            this.lastError = 0;
+            this.setpoint = 0;
+        }
 
-    function computePID() {
-    let error = thetaSetpoint - theta;   // Error signal
-    integral += error * dt;              // Accumulate integral
-    let derivative = (error - lastError) / dt; // Compute derivative
-    lastError = error;                   // Store previous error
+        computePID(input) {
+            let error = this.setpoint - input;   // Error signal
+            this.integral += error * this.dt;              // Accumulate integral
+            
+            this.integral = Math.max(Math.min(this.integral, this.maxOutput), -this.maxOutput);
+            
+            let derivative = (error - this.lastError) / this.dt; // Compute derivative
+            this.lastError = error;                   // Store previous error
 
-    // Compute PID output (torque)
-    tau = Kp * error + Ki * integral + Kd * derivative;
+            let output = this.kp * error +
+                         this.ki * this.integral +
+                         this.kd * derivative;
 
-    // Add the perturbation force **without overriding PID**
-    tau += perturbation;
-}
+            if (Math.abs(output) > this.maxOutput) { output = this.maxOutput * Math.sign(output); }
+
+            return output;
+        }
+
+        setKp(kp){ this.kp = kp; }
+        setKp(ki){ this.ki = ki; }
+        setKp(kd){ this.kd = kd; }
+
+    }
+
+
+//     // PID controller parameters
+//     let Kp = 50.0;   // Proportional gain
+//     let Ki = 50.0;    // Integral gain
+//     let Kd = 25.0;    // Derivative gain
+
+//     let integral = 0;  // Integral term
+//     let lastError = 0; // For derivative term
+//     let thetaSetpoint = 0; // Desired position (upright)
+
+//     function computePID() {
+//     let error = thetaSetpoint - theta;   // Error signal
+//     integral += error * dt;              // Accumulate integral
+//     let derivative = (error - lastError) / dt; // Compute derivative
+//     lastError = error;                   // Store previous error
+
+//     // Compute PID output (torque)
+//     tau = Kp * error + Ki * integral + Kd * derivative;
+
+//     // Add the perturbation force **without overriding PID**
+//     tau += perturbation;
+// }
 
     let pidON = false;
 
@@ -88,9 +126,13 @@ document.addEventListener("keyup", (event) => {
 
     var deltaX = 0;
 
+    var controller = new PidController(kp = 300, ki = 20, kd = 500, dt = 0.02, maxOutput = 30);
+
     setInterval(() => {
         if (pidON) {
-        computePID();
+            tau = controller.computePID(theta);
+        } else {
+            tau = perturbation;
         }
 
         ctx.clearRect(0, 0, c.width, c.height);
@@ -111,6 +153,16 @@ document.addEventListener("keyup", (event) => {
         pendulumBaseX = platformX + platformLength / 2;
         pendulumBaseY = platformY;
 
+
+
+
+
+
+
+
+
+
+
         ctx.save();
 
         ctx.translate(pendulumBaseX, pendulumBaseY);
@@ -127,6 +179,14 @@ document.addEventListener("keyup", (event) => {
 
         ctx.restore();
 
+
+
+
+
+
+
+
+
         ctx.beginPath();
         ctx.rect(
             platformX,
@@ -136,6 +196,14 @@ document.addEventListener("keyup", (event) => {
         );
         ctx.fill();
 
+
+
+
+
+
+
+
+
         let bobX = pendulumBaseX - pendulumLength * Math.sin(thetaRadians + Math.PI);
         let bobY = pendulumBaseY - pendulumLength * Math.cos(thetaRadians);
     
@@ -144,12 +212,20 @@ document.addEventListener("keyup", (event) => {
         ctx.fill();
 
 
+
+
+
+
+
+
+
+
         // Compute the next state of the system
         let a = (tau / (m * l ** 2)) + (g / l) * Math.sin(theta);
         v += a * dt;
         theta += v * dt;
 
-        t = t + 0.1;
+        t = t + dt;
     }, 1000/60);
 
     </script>
